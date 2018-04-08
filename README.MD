@@ -1,21 +1,22 @@
-Running the appication:
+# Running the Appication:
     - The application is able to be run either as a local docker container or as a kubernetes pod
-    - If you want to run the application as a kubernetes pod, you can use the included script 'k8.sh' to run the application, the steps are as follows:
+    - If you want to run the application as a kubernetes pod, you can use the included bash script 'k8.sh' to run the application, the steps are as follows:
         - ./k8.sh create //creates the pod locally
         - ./k8.sh expose //exposes the pods 5555 port to your hosts 5555 port so you can access the API
+    - The api runs on port 5555, so if you're running the application locally and want to get the list of all of the books you can enter: http://localhost:5555/books in your browser 
     
 
-API Definitions:
-    Model Definitions:
-        -Book:
+# API Definitions:
+     Model Definitions:
+        Book:
             {
-                "id": <uuid v4>
-                "title": <string>,
-                "author": <string>,
-                "publisher": <string>,
-                "publish_date": <string>,
-                "rating": <int:1-5>,
-                "status": <string: CheckedIn|CheckedOut>
+                "id": [uuid v4],
+                "title": [string],
+                "author": [string],
+                "publisher": [string],
+                "publish_date": [string],
+                "rating": [int:1-5],
+                "status": [string: CheckedIn|CheckedOut]
             }
 
     Endpoint Definitions:
