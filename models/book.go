@@ -1,17 +1,21 @@
 package model
 
 import (
+	"errors"
 	"time"
 
 	uuid "github.com/satori/go.uuid"
 )
 
-// - Title
-// - Author
-// - Publisher
-// - Publish Date
-// - Rating (1-3)
-// - Status (CheckedIn, CheckedOut)
+var (
+	// ErrInvalidStatus is returned whenever someone tried to create or modify a book to have an
+	// invalid status
+	ErrInvalidStatus = errors.New("The status must either be CheckedIn or CheckedOut")
+
+	// ErrInvalidRating is returned whenever someone tried to create or modify a book to have an
+	// invalid rating
+	ErrInvalidRating = errors.New("The rating must be 1-3")
+)
 
 // Status is an enum that will cover the two different status for books
 type Status uint8
@@ -56,4 +60,20 @@ func NewDefaultBook() Book {
 		Rating:      NullUInt8,
 		Status:      Status(NullUInt8),
 	}
+}
+
+// Validate will return an error if any of the feilds of the book are outside of what they should be
+func (b Book) Validate() error {
+	// check if the rating is between 1 and 3
+	if b.Rating < 1 || b.Rating > 3 {
+		return ErrInvalidRating
+	}
+
+	// check if the status is one of the two valid statuses
+	status := int(b.Status)
+	if status < 1 || status > 2 {
+		return ErrInvalidStatus
+	}
+
+	return nil
 }

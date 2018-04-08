@@ -37,10 +37,17 @@ func PostBook(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&book)
 	if err != nil {
 		log.Errorf("%v", err)
-		writeJSONFail(w, 400, "error unmarshaling: "+err.Error())
+		writeJSONFail(w, 400, "The Post Body was invalid")
 		return
 	}
 	defer r.Body.Close()
+
+	// validate that the books attributes are in the appropriate bounds
+	err = book.Validate()
+	if err != nil {
+		writeJSONFail(w, http.StatusBadRequest, err.Error())
+		return
+	}
 
 	library := managers.GetLibrary()
 	library.AddBook(book)
@@ -65,6 +72,13 @@ func PutBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
+
+	// validate that the books attributes are in the appropriate bounds
+	err = book.Validate()
+	if err != nil {
+		writeJSONFail(w, http.StatusBadRequest, err.Error())
+		return
+	}
 
 	book.ID = id
 

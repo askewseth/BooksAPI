@@ -26,5 +26,12 @@ func writeJSONSuccess(w http.ResponseWriter, i interface{}, status int) error {
 
 func writeJSONFail(w http.ResponseWriter, code int, s string) {
 	w.WriteHeader(code)
-	w.Write([]byte(s))
+	data := struct {
+		Error string `json:"error"`
+	}{
+		s,
+	}
+
+	b, _ := json.Marshal(data)
+	w.Write([]byte(b))
 }
