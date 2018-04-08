@@ -14,9 +14,12 @@
                 "title": [string],
                 "author": [string],
                 "publisher": [string],
-                "publish_date": [string],
-                "rating": [int:1-5],
-                "status": [string: CheckedIn|CheckedOut]
+                "publish_date": [string format:2018-01-02T15:04:05Z],
+                "rating": [int:1-3],
+                "status": [
+                            taken in as int: 0|1,
+                            returned as string: CheckedIn|CheckedOut
+                          ]
             }
 
     Endpoint Definitions:

@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 var (
 	// ErrInvalidStatus is returned whenever someone tried to create or modify a book to have an
 	// invalid status
-	ErrInvalidStatus = errors.New("The status must either be CheckedIn or CheckedOut")
+	ErrInvalidStatus = errors.New("The status must either be CheckedIn(0) or CheckedOut(1)")
 
 	// ErrInvalidRating is returned whenever someone tried to create or modify a book to have an
 	// invalid rating
@@ -71,9 +72,34 @@ func (b Book) Validate() error {
 
 	// check if the status is one of the two valid statuses
 	status := int(b.Status)
-	if status < 1 || status > 2 {
+	if status < 0 || status > 1 {
 		return ErrInvalidStatus
 	}
 
 	return nil
+}
+
+// MarshalJSON returns a byte array of the json version of a book,
+// the only difference between this and the model version of a book is that
+// status is a string instead of a uint8
+func (b Book) MarshalJSON() ([]byte, error) {
+	type Alias Book
+
+	var stringStatus string
+	switch b.Status {
+	case CheckedIn:
+		stringStatus = "CheckedIn"
+	case CheckedOut:
+		stringStatus = "CheckedOut"
+	}
+
+	return json.Marshal(&struct {
+		Status       Status `json:"-"`
+		StringStatus string `json:"status"`
+		Alias
+	}{
+		Status:       b.Status,
+		StringStatus: stringStatus,
+		Alias:        (Alias)(b),
+	})
 }
