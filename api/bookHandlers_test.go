@@ -68,14 +68,14 @@ func TestGetBooksAPI(t *testing.T) {
 		t.Errorf("Expected status 200 from GET /books, got %v", res.Status)
 	}
 
-	var books []model.Book
+	var books []map[string]interface{}
 	err = json.NewDecoder(res.Body).Decode(&books)
 	if err != nil {
-		t.Errorf("Error trying to read the body from GET /devices")
+		t.Errorf("Error trying to read the body from GET /devices: %v", err)
 	}
 
-	if len(books) != 1 && books[0].Title != "MyBook" {
-		t.Errorf("Didn't get the one book in the library back on GET /bookså")
+	if len(books) != 1 && books[0]["title"].(string) != "MyBook" {
+		t.Errorf("Didn't get the one book in the library back on GET /books")
 	}
 }
 
@@ -96,13 +96,13 @@ func TestGetBookByID(t *testing.T) {
 		t.Errorf("Expected status 200 from GET /book/{id}, got %v", res.Status)
 	}
 
-	var book model.Book
+	var book map[string]interface{}
 	err = json.NewDecoder(res.Body).Decode(&book)
 	if err != nil {
 		t.Errorf("Error trying to read the body from GET /book/{id}")
 	}
 
-	if book.Title != "MyBook" {
+	if book["title"].(string) != "MyBook" {
 		t.Errorf("Didn't get the correct book on GET /books")
 	}
 }
@@ -196,7 +196,10 @@ func TestPostBook(t *testing.T) {
 
 	library := managers.GetLibrary()
 
-	book := model.Book{Title: "MyPostBook"}
+	book := map[string]interface{}{
+		"title":  "MyPostBook",
+		"rating": 1,
+	}
 	b, err := json.Marshal(book)
 	if err != nil {
 		t.Errorf("Error marshing book for PUT /books %v", err)
@@ -226,7 +229,11 @@ func TestPutBook(t *testing.T) {
 	book := model.Book{Title: "MyPutBook", ID: id}
 	library.Books[id] = book
 
-	newBook := model.Book{Title: "MyNewPutBook"}
+	newBook := map[string]interface{}{
+		"title":  "MyNewPutBook",
+		"rating": 1,
+		"status": 0,
+	}
 	b, err := json.Marshal(newBook)
 	if err != nil {
 		t.Errorf("Error marshing book for PUT /books %v", err)
@@ -239,10 +246,10 @@ func TestPutBook(t *testing.T) {
 	}
 
 	if res.StatusCode != 202 {
-		t.Errorf("Didn't get status accepted on good PUT request")
+		t.Errorf("Didn't get status accepted on good PUT request, got status %v", res.StatusCode)
 	}
 
-	if len(library.Books) != 1 && library.Books[id].Title != newBook.Title {
+	if len(library.Books) != 1 && library.Books[id].Title != newBook["title"] {
 		t.Errorf("Didn't PUT /book/{id} correctly")
 	}
 }
@@ -250,7 +257,11 @@ func TestPutBook(t *testing.T) {
 func TestPutBadBook(t *testing.T) {
 	defer cleanLibrary()
 
-	newBook := model.Book{Title: "MyNewPutBook"}
+	newBook := map[string]interface{}{
+		"title":  "MyNewPutBook",
+		"rating": 1,
+		"status": 0,
+	}
 	b, err := json.Marshal(newBook)
 	if err != nil {
 		t.Errorf("Error marshing book for PUT /books %v", err)
