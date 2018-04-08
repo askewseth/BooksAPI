@@ -1,8 +1,9 @@
+---
 apiVersion: v1
 kind: Pod
 spec:
   containers:
-  - name: books-api
-    image: askewseth/books-api
-	ports:
-	- containerPort: 5555
+    - name: books-api
+      image: askewseth/books-api
+      ports:
+        - containerPort: 5555
