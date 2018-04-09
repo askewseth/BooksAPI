@@ -81,7 +81,6 @@ func TestGetBooksAPI(t *testing.T) {
 
 func TestGetBookByID(t *testing.T) {
 	defer cleanLibrary()
-	cleanLibrary()
 
 	library := managers.GetLibrary()
 	library.Books[uuid.UUID{}] = model.Book{Title: "MyBook"}
@@ -109,7 +108,6 @@ func TestGetBookByID(t *testing.T) {
 
 func TestGetBookByIDBadBook(t *testing.T) {
 	defer cleanLibrary()
-	cleanLibrary()
 
 	badID, _ := uuid.NewV4()
 	res, err := sendRequest("/books/"+badID.String(), "GET", "")
@@ -139,7 +137,6 @@ func TestGetBookByIDBadUUID(t *testing.T) {
 
 func TestDeleteBook(t *testing.T) {
 	defer cleanLibrary()
-	cleanLibrary()
 
 	library := managers.GetLibrary()
 	library.Books[uuid.UUID{}] = model.Book{Title: "MyBook"}
